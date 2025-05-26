@@ -1,107 +1,131 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Générateur de Combinaisons Loto</title>
-<style>
-  body, html {
-    height: 100%;
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: linear-gradient(45deg, #6dae89 25%, #136b66 25%, #136b66 50%, #6dae89 50%, #6dae89 75%, #136b66 75%, #136b66 100%);
-    background-size: 40px 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  #container {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    width: 700px;
-    max-height: 80vh;
-    display: flex;
-    flex-direction: column;
-  }
-  label, input, button {
-    font-size: 16px;
-  }
-  input {
-    width: 80px;
-    padding: 5px;
-    margin: 10px 0;
-  }
-  button {
-    padding: 8px 12px;
-    cursor: pointer;
-  }
-  #resultat {
-    margin-top: 15px;
-    flex-grow: 1;
-    overflow-y: auto;
-    border: 1px solid #ccc;
-    padding: 10px;
-    white-space: pre-wrap;
-    font-family: monospace;
-  }
-  .ligne-rouge {
-    background-color: #FFCCCC;
-    padding: 5px;
-    border-radius: 3px;
-    margin-bottom: 5px;
-  }
-  .ligne-bleu {
-    background-color: #CCCCFF;
-    padding: 5px;
-    border-radius: 3px;
-    margin-bottom: 5px;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Générateur de Loto</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body, html {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      height: 100%;
+      background: linear-gradient(135deg, #6dae89, #136b66);
+      background-size: 40px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+    }
+    #container {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      border-radius: 20px;
+      padding: 30px;
+      max-width: 600px;
+      width: 90%;
+      box-shadow: 0 0 15px rgba(0,0,0,0.3);
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 28px;
+      color: #fff;
+    }
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+    input {
+      padding: 10px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      width: 100%;
+      margin-bottom: 15px;
+    }
+    button {
+      background-color: #1e9e8b;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background-color: #166f61;
+    }
+    #resultat {
+      margin-top: 20px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .ligne {
+      padding: 10px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      animation: fadeIn 0.3s ease;
+    }
+    .ligne-rouge {
+      background-color: rgba(255, 100, 100, 0.25);
+    }
+    .ligne-bleu {
+      background-color: rgba(100, 100, 255, 0.25);
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
 </head>
 <body>
   <div id="container">
-    <label for="nombre">Nombre de combinaisons à générer :</label>
+    <h1>🎲 Générateur de Loto</h1>
+    <label for="nombre">Nombre de combinaisons :</label>
     <input type="number" id="nombre" value="10" min="1" />
     <button onclick="genererCombinaisons()">Générer</button>
-
-    <div id="resultat" tabindex="0" aria-label="Résultats des combinaisons"></div>
+    <div id="resultat" aria-label="Résultats des combinaisons"></div>
   </div>
 
-<script>
-function tirer_combinaison() {
-  // Tirage 5 numéros uniques entre 1 et 49
-  let numeros = [];
-  while (numeros.length < 5) {
-    let n = Math.floor(Math.random() * 49) + 1;
-    if (!numeros.includes(n)) {
-      numeros.push(n);
+  <script>
+    function tirer_combinaison() {
+      let numeros = [];
+      while (numeros.length < 5) {
+        let n = Math.floor(Math.random() * 49) + 1;
+        if (!numeros.includes(n)) {
+          numeros.push(n);
+        }
+      }
+      numeros.sort((a,b) => a - b);
+      let numero_chance = Math.floor(Math.random() * 10) + 1;
+      return {numeros, numero_chance};
     }
-  }
-  numeros.sort((a,b) => a - b);
-  // Tirage numéro chance entre 1 et 10
-  let numero_chance = Math.floor(Math.random() * 10) + 1;
-  return {numeros, numero_chance};
-}
 
-function genererCombinaisons() {
-  const n = parseInt(document.getElementById('nombre').value);
-  const resultatDiv = document.getElementById('resultat');
-  resultatDiv.innerHTML = '';
+    function genererCombinaisons() {
+      const n = parseInt(document.getElementById('nombre').value);
+      const resultatDiv = document.getElementById('resultat');
+      resultatDiv.innerHTML = '';
 
-  if (isNaN(n) || n < 1) {
-    resultatDiv.textContent = "Veuillez entrer un nombre entier valide.";
-    return;
-  }
+      if (isNaN(n) || n < 1) {
+        resultatDiv.textContent = "Veuillez entrer un nombre entier valide.";
+        return;
+      }
 
-  for (let i = 0; i < n; i++) {
-    const combi = tirer_combinaison();
-    const div = document.createElement('div');
-    div.textContent = `Combinaison ${i+1}: Numéros = [${combi.numeros.join(', ')}], Numéro chance = ${combi.numero_chance}`;
-    div.className = (i % 2 === 0) ? 'ligne-rouge' : 'ligne-bleu';
-    resultatDiv.appendChild(div);
-  }
-}
-</script>
+      for (let i = 0; i < n; i++) {
+        const combi = tirer_combinaison();
+        const div = document.createElement('div');
+        div.textContent = `Combinaison ${i+1}: [${combi.numeros.join(', ')}], Chance = ${combi.numero_chance}`;
+        div.className = 'ligne ' + (i % 2 === 0 ? 'ligne-rouge' : 'ligne-bleu');
+        resultatDiv.appendChild(div);
+      }
+    }
+  </script>
 </body>
 </html>
